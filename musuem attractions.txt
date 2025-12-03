@@ -1,0 +1,54 @@
+main attractions:
+a) perception pixel art
+b) spinning disks
+c) light art (use shadows to make an image on wall)
+d) scaling room (objects look like they are getting bigger/smaller when moving)
+e) dragon that always looks at you
+f) depth perception art (like make a basic wall appear as a path to another room)
+g) neon spinning tunnel
+h) impossible object collections(like the gray rectangles on the project proposal)
+i) 3D crossed eyed illusions
+j) protruding pyramids that look like hallways 
+
+
+ordering:
+1.
+e) dragon that always looks at you 4
+
+2.
+g) neon spinning tunnel
+/
+i) 3D crossed eyed illusions 4 (1-4 with increasing complexity to see)
+
+3.
+a) perception pixel art 2
+b) spinning disks 3
+
+4.
+c) light art (use shadows to make an image on wall) 2
+
+5.
+d) scaling room (objects look like they are getting bigger/smaller when moving in the room)
+
+6.
+f1) depth perception art (make a basic flat wall appear as a path to another room)
+
+7.
+f2*) still depth perception, but make it blend with the wall and pillars to make one image. blue dot is viewing spot
+h) impossible object collections(like the gray rectangles on the project proposal) 3
+j) protruding pyramids that look like hallways (3 on same panel)
+
+8.
+end credits
+teleports back to start
+
+
+
+
+DON"T IMPLEMENT BELOW : 
+(1 and 2 would require making a user model)
+1) color room: displays shadows created when stepping inside from 3 RGB lights
+2) mirror illusions?
+- infinite pentagon prism
+- anomalous mirror symmetry illusions
+- small mirror maze that confuses user

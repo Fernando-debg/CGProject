@@ -42,7 +42,10 @@ j) protruding pyramids that look like hallways (3 on same panel)
 end credits
 teleports back to start
 
-if possible to implement: 
+
+
+
+DON"T IMPLEMENT BELOW : 
 (1 and 2 would require making a user model)
 1) color room: displays shadows created when stepping inside from 3 RGB lights
 2) mirror illusions?

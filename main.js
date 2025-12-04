@@ -45,21 +45,14 @@ function setupScene() {
 
     // Camera Setup
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(4, 2, 11);
+    camera.position.set(0, 2, 28);
     camera.rotation.order = "YXZ"; 
 
-    // Lighting
-    const spotLight = new THREE.SpotLight(0xffde64, 7, 100, .2, .5);
-    spotLight.position.set(0, 25, 0);
-    spotLight.castShadow = true;
-    spotLight.shadow.bias = -0.0001;
-    scene.add(spotLight);
-
-    const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+    const ambient = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambient);
 
     // Ground Plane
-    const groundGeometry = new THREE.PlaneGeometry(20, 20, 32, 32);
+    const groundGeometry = new THREE.PlaneGeometry(20, 60, 32, 32);
     groundGeometry.rotateX(-Math.PI / 2);
     const groundMaterial = new THREE.MeshStandardMaterial({
         color: 0x555555,
@@ -70,10 +63,10 @@ function setupScene() {
     groundMesh.receiveShadow = true;
     scene.add(groundMesh);
 
-    // Load GLTF Model (Racecar example)
-    const loader = new GLTFLoader().setPath('public/racecar/');
-    loader.load('scene.gltf', (gltf) => {
-        console.log('loading model');
+    // Load GLTF Models
+    //dragon
+    const dragons = new GLTFLoader().setPath('public/dragon/');
+    dragons.load('scene.gltf', (gltf) => {
         const mesh = gltf.scene;
 
         mesh.traverse((child) => {
@@ -82,20 +75,72 @@ function setupScene() {
                 child.receiveShadow = true;
             }
         });
-
-        mesh.position.set(0, 1.05, -1);
+        
+        const dragcopy = mesh.clone();
+        mesh.position.set(-5, 0, 18);
+        mesh.rotateY(-Math.PI/2.0);
         scene.add(mesh);
+        
+        dragcopy.position.set(5,0,18);
+        dragcopy.rotateY(Math.PI/2.0);
+        
+        dragcopy.scale.x = -1;
+        scene.add(dragcopy);
+    });
 
-        const progressContainer = document.getElementById('progress-container');
-        if (progressContainer) {
-            progressContainer.style.display = 'none';
-        }
-    }, (xhr) => {
-        console.log(`loading ${xhr.loaded / xhr.total * 100}%`);
-    }, (error) => {
-        console.error(error);
+    const pyramid1 = new GLTFLoader().setPath('public/pyramid1/');
+    pyramid1.load('pyramid4.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+
+        mesh.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+        //mesh.rotateY(-10*(Math.PI/180.0));
+        mesh.scale.y = mesh.scale.z = .75;
+        mesh.position.set(-7, 2, 0);
+
+        scene.add(mesh);
+    });
+
+    const pyramid2 = new GLTFLoader().setPath('public/pyramid2/');
+    pyramid2.load('pyramid2.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+
+        mesh.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+        //mesh.rotateY(10*(Math.PI/180.0));
+        mesh.scale.y = mesh.scale.z = .75;
+        mesh.position.set(-7, 2, -6);
+
+        scene.add(mesh);
+    });
+
+    const pyramid3 = new GLTFLoader().setPath('public/pyramid3/');
+    pyramid3.load('pyramid3.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+
+        mesh.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+        //mesh.rotateY(0*(Math.PI/180.0));
+        mesh.scale.y = mesh.scale.z = .75;
+        mesh.position.set(-7, 2, -12);
+
+        scene.add(mesh);
     });
 }
+
+
 
 /**
  * Sets up all window and keyboard event listeners.

@@ -6,8 +6,8 @@ let camera, renderer, scene;
 const clock = new THREE.Clock(); 
 
 // Control Constants
-const movementSpeed = 5.0; 
-const rotationSpeed = 1; 
+const movementSpeed = 6; 
+const rotationSpeed = 1.0; 
 const PI_2 = Math.PI / 2;
 
 // Input State Variables
@@ -48,8 +48,26 @@ function setupScene() {
     camera.position.set(0, 2, 28);
     camera.rotation.order = "YXZ"; 
 
-    const ambient = new THREE.AmbientLight(0xffffff, 1);
+    // Lighting
+    const ambient = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambient);
+
+    const directional = new THREE.DirectionalLight(0xffffff, 1);
+    directional.position.set(0,50,0);
+    directional.castShadow = true;
+    let res = 3;
+    directional.shadow.mapSize.width = 4096*res;
+    directional.shadow.mapSize.height = 4096*res;
+    directional.shadow.camera.left = -100; 
+    directional.shadow.camera.right = 100;
+    directional.shadow.camera.top = 100; 
+    directional.shadow.camera.bottom = -100;
+    directional.shadow.camera.near = 0.5;
+    directional.shadow.camera.far = 100;
+    scene.add(directional);
+    
+    //TODO:
+    //set up map for museum
 
     // Ground Plane
     const groundGeometry = new THREE.PlaneGeometry(20, 60, 32, 32);
@@ -63,19 +81,42 @@ function setupScene() {
     groundMesh.receiveShadow = true;
     scene.add(groundMesh);
 
+    const wallg = new THREE.PlaneGeometry(30,5);
+    wallg.rotateY(Math.PI/2);
+    const wallm = new THREE.MeshStandardMaterial({
+        color: 0x555555,
+        side: THREE.DoubleSide
+    });
+    const wallme = new THREE.Mesh(wallg, wallm);
+    wallme.position.set(10,2.5,0);
+    wallme.castShadow = false;
+    wallme.receiveShadow = true;
+    scene.add(wallme);
+
     // Load GLTF Models
+    const enableShadows = (gltfScene) => {
+        gltfScene.traverse((child) => {
+            if (child.isMesh) {
+                // Ensure the material can handle lighting (MeshStandardMaterial is ideal)
+                if (Array.isArray(child.material)) {
+                    child.material.forEach(mat => mat.side = THREE.DoubleSide);
+                } else {
+                    child.material.side = THREE.DoubleSide; 
+                }
+                // *** THE FIX ***
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    };
+    /** */
     //dragon
     const dragons = new GLTFLoader().setPath('public/dragon/');
     dragons.load('scene.gltf', (gltf) => {
         const mesh = gltf.scene;
 
-        mesh.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-        
+        enableShadows(mesh);
+
         const dragcopy = mesh.clone();
         mesh.position.set(-5, 0, 18);
         mesh.rotateY(-Math.PI/2.0);
@@ -88,56 +129,63 @@ function setupScene() {
         scene.add(dragcopy);
     });
 
+    // perception pyramids
     const pyramid1 = new GLTFLoader().setPath('public/pyramid1/');
     pyramid1.load('pyramid4.gltf', (gltf) =>{
         const mesh = gltf.scene;
-
-        mesh.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-        //mesh.rotateY(-10*(Math.PI/180.0));
+        enableShadows(mesh);
         mesh.scale.y = mesh.scale.z = .75;
         mesh.position.set(-7, 2, 0);
 
         scene.add(mesh);
     });
-
     const pyramid2 = new GLTFLoader().setPath('public/pyramid2/');
     pyramid2.load('pyramid2.gltf', (gltf) =>{
         const mesh = gltf.scene;
-
-        mesh.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-        //mesh.rotateY(10*(Math.PI/180.0));
+        enableShadows(mesh);
         mesh.scale.y = mesh.scale.z = .75;
         mesh.position.set(-7, 2, -6);
 
         scene.add(mesh);
     });
-
     const pyramid3 = new GLTFLoader().setPath('public/pyramid3/');
     pyramid3.load('pyramid3.gltf', (gltf) =>{
         const mesh = gltf.scene;
-
-        mesh.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-        //mesh.rotateY(0*(Math.PI/180.0));
+        enableShadows(mesh);
         mesh.scale.y = mesh.scale.z = .75;
         mesh.position.set(-7, 2, -12);
 
         scene.add(mesh);
     });
+
+    // words 
+    const word1 = new GLTFLoader().setPath('public/word/');
+    word1.load('doublewords1.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+        enableShadows(mesh);
+        mesh.position.set(0,1,0);
+        scene.add(mesh);
+    });
+
+    //impossible cubes
+    const cubes = new GLTFLoader().setPath('public/impossible_cubes/');
+    cubes.load('impossible_cubes.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+        enableShadows(mesh);
+        mesh.position.set(0,2.5,-10);
+        scene.add(mesh);
+    });
+
+    //impossible chair
+    const chair = new GLTFLoader().setPath('public/chair/');
+    chair.load('chair.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+        enableShadows(mesh);
+        mesh.position.set(0,0,0);
+        mesh.scale.x = mesh.scale.y = mesh.scale.z = 0.15;
+        scene.add(mesh);
+    });
+    
 }
 
 

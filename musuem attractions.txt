@@ -1,12 +1,14 @@
 # = done
+@ = fuhhh nah
 main attractions:
-a) perception pixel art
-b) spinning disks
-c) light art (use shadows to make an image on wall)
-d) scaling room (objects look like they are getting bigger/smaller when moving)
+a) #perception pixel art
+b) @spinning disks
+c) #light art (use shadows to make an image on wall)
+d) #scaling room (objects look like they are getting bigger/smaller when moving)
 e) #dragon that always looks at you
-g) neon spinning tunnel
-h) impossible object collections(like the gray rectangles on the project proposal)
+f) #anamorphic art (computer graphics illusion)
+g) @neon spinning tunnel
+h) #impossible object collections(like the gray rectangles on the project proposal)
 i) 3D crossed eyed illusions
 j) #protruding pyramids that look like hallways 
 

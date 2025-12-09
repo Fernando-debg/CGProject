@@ -1,0 +1,9 @@
+NOTE: Assuming user has Node.js already installed with the npm and npx packages
+
+Installation and Run Steps
+1. Download the Project Files:
+2. Open Your Terminal/Command Prompt:
+- cd to the main folder where index.html and main.js file are located
+3. Start the Local Server: npx serve .
+4. click on local address then go to browser http://localhost:3000).
+5. WASD for movement, Arrowkeys for viewing

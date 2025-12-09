@@ -4,10 +4,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // --- GLOBAL VARIABLES ---
 let camera, renderer, scene;
 const clock = new THREE.Clock(); 
+const worldPosition = new THREE.Vector3();
 
 // Control Constants
-const movementSpeed = 6; 
-const rotationSpeed = 1.0; 
+const movementSpeed = 8*2; 
+const rotationSpeed = 1.1; 
 const PI_2 = Math.PI / 2;
 
 // Input State Variables
@@ -20,6 +21,9 @@ let lookRight = false;
 let lookUp = false;
 let lookDown = false;
 
+//DEBUG
+let oscillationCube;
+let oscillationCube2;
 
 // --- 1. SETUP FUNCTIONS ---
 
@@ -37,6 +41,17 @@ function setupRenderer() {
     document.body.appendChild(renderer.domElement);
 }
 
+function createSpotlight(x,y,z,color) {
+    // 1. Instantiate the light with fixed properties from your example
+    // SpotLight( color, intensity, distance, angle, penumbra, decay )
+    const light = new THREE.SpotLight(color, 1, 50, Math.PI / 2, 0.7);
+
+    // 2. Apply position and target
+    light.position.copy(new THREE.Vector3(x,y,z));
+
+    return light;
+}
+
 /**
  * Initializes the Scene, Camera, Lighting, and Geometry.
  */
@@ -45,71 +60,85 @@ function setupScene() {
 
     // Camera Setup
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(0, 2, 28);
+    camera.position.set(0,3.3,23);
     camera.rotation.order = "YXZ"; 
+    camera.fov = 70;
+    camera.updateProjectionMatrix();
 
     // Lighting
-    const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+    const ambient = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambient);
+   
 
-    const directional = new THREE.DirectionalLight(0xffffff, 1);
-    directional.position.set(0,50,0);
-    directional.castShadow = true;
-    let res = 3;
-    directional.shadow.mapSize.width = 4096*res;
-    directional.shadow.mapSize.height = 4096*res;
-    directional.shadow.camera.left = -100; 
-    directional.shadow.camera.right = 100;
-    directional.shadow.camera.top = 100; 
-    directional.shadow.camera.bottom = -100;
-    directional.shadow.camera.near = 0.5;
-    directional.shadow.camera.far = 100;
-    scene.add(directional);
-    
-    //TODO:
-    //set up map for museum
-
-    // Ground Plane
-    const groundGeometry = new THREE.PlaneGeometry(20, 60, 32, 32);
-    groundGeometry.rotateX(-Math.PI / 2);
-    const groundMaterial = new THREE.MeshStandardMaterial({
-        color: 0x555555,
-        side: THREE.DoubleSide
-    });
-    const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
-    groundMesh.castShadow = false;
-    groundMesh.receiveShadow = true;
-    scene.add(groundMesh);
-
-    const wallg = new THREE.PlaneGeometry(30,5);
-    wallg.rotateY(Math.PI/2);
-    const wallm = new THREE.MeshStandardMaterial({
-        color: 0x555555,
-        side: THREE.DoubleSide
-    });
-    const wallme = new THREE.Mesh(wallg, wallm);
-    wallme.position.set(10,2.5,0);
-    wallme.castShadow = false;
-    wallme.receiveShadow = true;
-    scene.add(wallme);
-
-    // Load GLTF Models
-    const enableShadows = (gltfScene) => {
-        gltfScene.traverse((child) => {
-            if (child.isMesh) {
-                // Ensure the material can handle lighting (MeshStandardMaterial is ideal)
-                if (Array.isArray(child.material)) {
-                    child.material.forEach(mat => mat.side = THREE.DoubleSide);
-                } else {
-                    child.material.side = THREE.DoubleSide; 
-                }
-                // *** THE FIX ***
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
-    };
+    //aemes room
+    const point = new THREE.PointLight(0xffffff, 0.4, 30);
+    point.position.set(74.64, 6, -3.70);
+    point.castShadow = true;
+    scene.add(point);
+    //illusion room
+    const pointt = new THREE.PointLight(0xffffff, 1, 50);
+    pointt.position.set(-40, 15, 24.88);
+    scene.add(pointt);
+    //color
     /** */
+    const point2 = new THREE.PointLight(0xff0000, 1, 50);
+    point2.position.set(-8.15, 3.5, -57.25);
+    point2.castShadow = true;
+    scene.add(point2);
+    const point3 = new THREE.PointLight(0x0000ff, 1, 50);
+    point3.position.set(-20.32, 3.5, -61.09);
+    point3.castShadow = true;
+    scene.add(point3);
+    const point4 = new THREE.PointLight(0x0000ff, 1, 50);
+    point4.position.set(23.81, 3.5, -45.91);
+    point4.castShadow = true;
+    scene.add(point4);
+    const point5 = new THREE.PointLight(0x00ff00, 1, 50);
+    point5.position.set(40.73, 3.5, -63.64);
+    point5.castShadow = true;
+    scene.add(point5);
+
+
+    //lastroom
+    const pointl = new THREE.PointLight(0xffffff, 1, 50);
+    pointl.position.set(69.16, 15, 50.28);
+    scene.add(pointl);
+
+    const l1 = createSpotlight(0, 15, 0, 0xffffff);
+    const l2 = createSpotlight(-22.18, 15, 43.88, 0xffffff);
+    const l3 = createSpotlight(-62.78, 12, 43.88, 0xffffff);
+    const l4 = createSpotlight(-62, 15, 2.91, 0xffffff);
+    const l5 = createSpotlight(-23.58, 15, 2.91, 0xffffff);
+    scene.add(l1);
+    scene.add(l2);
+    scene.add(l3);
+    scene.add(l4);
+    scene.add(l5);
+
+    const l6 = createSpotlight(55.49, 11,-23.17, 0xffffff);
+    scene.add(l6);
+
+    const l11 = createSpotlight(52.37, 15, 22.71, 0xffffff);
+    const l21 = createSpotlight(53.07, 15, 63.88, 0xffffff);
+    const l31 = createSpotlight(123.2, 15, 64.31, 0xffffff);
+    const l41 = createSpotlight(123, 15, 23.34, 0xffffff);
+    scene.add(l11);
+    scene.add(l21);
+    scene.add(l31);
+    scene.add(l41);
+
+    // Load map
+    const map = new GLTFLoader().setPath('public/MAPS/map4/');
+    map.load('worldmap.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.position.set(0,0,28);
+        scene.add(mesh);
+    });
+
+
+    /**
     //dragon
     const dragons = new GLTFLoader().setPath('public/dragon/');
     dragons.load('scene.gltf', (gltf) => {
@@ -167,6 +196,15 @@ function setupScene() {
         scene.add(mesh);
     });
 
+    // words 
+    const word2 = new GLTFLoader().setPath('public/word2/');
+    word2.load('word2.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+        enableShadows(mesh);
+        mesh.position.set(0,1,5);
+        scene.add(mesh);
+    });
+
     //impossible cubes
     const cubes = new GLTFLoader().setPath('public/impossible_cubes/');
     cubes.load('impossible_cubes.gltf', (gltf) =>{
@@ -185,7 +223,28 @@ function setupScene() {
         mesh.scale.x = mesh.scale.y = mesh.scale.z = 0.15;
         scene.add(mesh);
     });
-    
+
+    //perspective
+    const perspective = new GLTFLoader().setPath('public/perspective/');
+    perspective.load('assortment.gltf', (gltf) =>{
+        const mesh = gltf.scene;
+        enableShadows(mesh);
+        mesh.position.set(0,2,-20);
+        scene.add(mesh);
+    });*/
+
+    //cube used to displays the ames illusion:
+    const cubeGeometry = new THREE.BoxGeometry(4,4,4);
+    const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x00AABB });
+    oscillationCube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    oscillationCube.position.set(85.48+2-.5, -1.5, -6-3+.5); // Starting center position (X=0)
+    oscillationCube.castShadow = true;
+    scene.add(oscillationCube);
+    oscillationCube2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    oscillationCube2.position.set(85.48-.5-.5, 3, -6+1+1); // Starting center position (X=0)
+    oscillationCube2.castShadow = true;
+    scene.add(oscillationCube2);
+
 }
 
 
@@ -288,9 +347,55 @@ function animate() {
     
     const delta = clock.getDelta(); 
     
-    updateControls(delta);
+    //
+    // Get the total time the scene has been running
+    const time = clock.getElapsedTime(); 
     
+    // --- OSCILLATION PARAMETERS ---
+    const amplitude = .15; // The maximum distance the cube moves from its center (5 units in each direction)
+    const speed = 1;     // How fast the cube completes one cycle (1 cycle per 2*PI seconds)
+
+    // Calculate the new X position
+    // sin(time * speed) produces a value between -1 and 1
+    //const newX = Math.sin(time * speed) * amplitude;
+    const newX = -Math.sin(time * speed) * amplitude*.7;
+    const newZ = Math.sin(time * speed) * amplitude;
+    const newY = Math.sin(time * speed) * amplitude*.1;
+
+    //  animates the cube to be moves back and worth
+    if (oscillationCube) {
+        oscillationCube.position.x = oscillationCube.position.x + newX; 
+        oscillationCube.position.z = oscillationCube.position.z + newZ; 
+        oscillationCube.position.y = oscillationCube.position.y + newY; 
+    }
+
+    if (oscillationCube2) {
+        oscillationCube2.position.x = oscillationCube2.position.x + -newX; 
+        oscillationCube2.position.z = oscillationCube2.position.z + -newZ; 
+        oscillationCube2.position.y = oscillationCube2.position.y + -newY; 
+    }
+
+    updateControls(delta);
+
+    //camera info
+    if (camera && document.getElementById('camera-position-display')) {
+        
+        // Get the current position vector
+        const pos = camera.position;
+        
+        // Format the numbers to two decimal places for cleaner display
+        const x = pos.x.toFixed(2);
+        const y = pos.y.toFixed(2);
+        const z = pos.z.toFixed(2);
+        
+        // Update the HTML content
+        // Update the HTML content
+        document.getElementById('camera-position-display').innerText = 
+            `Position: X: ${x}, Y: ${y}, Z: ${z}`;
+    }
+
     renderer.render(scene, camera);
+
 }
 
 
